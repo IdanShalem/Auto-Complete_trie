@@ -24,12 +24,53 @@ class AutoCompleteTrie {
         }
     }
 
+    findWord(word){
+        if(word === '') {
+            return true
+        } 
+        else if(this.children[word[0]]){
+            return this.children[word[0]].findWord(word.slice(1))
+        } else{
+            return false
+        }
+    }
+
+    predictWords(input){
+        const node = this._getRemainingTree(input, this)
+        const allWords = this._allWordsHelper(input, node, [])
+        if(node && node.enfOfWord){
+            allWords.unshift(input)
+        }
+        return allWords
+    }
+
+    _getRemainingTree(input, node){
+        if(input.length === 1){
+            if(node.children[input[0]]){
+                return node.children[input[0]]
+            } else {
+                return
+            }
+        } else {
+            if(node.children[input[0]]){
+                return node.children[input[0]]._getRemainingTree(input.slice(1), node.children[input[0]])
+            } else {
+                return
+            }
+        }
+    }
+
+    _allWordsHelper(input, node, allWords){
+        if(node){
+            Object.keys(node.children).forEach(l => {
+                let strToPass = input + node.children[l].value
+                if(node.children[l].enfOfWord){
+                    allWords.push(strToPass)
+                }
+                node.children[l]._allWordsHelper(strToPass, node.children[l], allWords)
+            })
+        }
+        return allWords
+    }
+
 }
-
-const trie = new AutoCompleteTrie(' ')
-
-trie.addWord('hello')
-trie.addWord('run')
-trie.addWord('running')
-trie.addWord('rush')
-console.log(trie.children['r'].children['u'].children['s'])

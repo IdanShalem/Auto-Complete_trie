@@ -1,0 +1,10 @@
+#auto-complete {
+    display: grid;
+    visibility: hidden;
+    border: 1px solid black;
+    width: 200px;
+}
+
+input{
+    width: 200px;
+}
